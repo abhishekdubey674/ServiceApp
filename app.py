@@ -74,6 +74,19 @@ def home():
 
     return render_template('index.html', workers=workers)
 
+# ---------------- WORKER PROFILE ----------------
+@app.route('/worker/<int:id>')
+def worker_profile(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM workers WHERE id = ?", (id,))
+    worker = cursor.fetchone()
+
+    conn.close()
+
+    return render_template('worker.html', worker=worker)
+
 # ---------------- REGISTER ----------------
 @app.route('/register', methods=['GET', 'POST'])
 def register():
