@@ -38,6 +38,14 @@ def init_db():
         date TEXT
     )
     ''')
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS reviews (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        worker_id INTEGER,
+        rating INTEGER,
+        review TEXT
+        )
+        ''')
     # 👉 Users table (login system)
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS users (
@@ -74,7 +82,7 @@ def home():
 
     return render_template('index.html', workers=workers)
 
-# ---------------- WORKER PROFILE ----------------
+# ---------------- WORKER PROFILE WITH REVIEWS ----------------
 @app.route('/worker/<int:id>')
 def worker_profile(id):
     conn = get_db_connection()
@@ -83,9 +91,30 @@ def worker_profile(id):
     cursor.execute("SELECT * FROM workers WHERE id = ?", (id,))
     worker = cursor.fetchone()
 
+    cursor.execute("SELECT * FROM reviews WHERE worker_id = ?", (id,))
+    reviews = cursor.fetchall()
+
     conn.close()
 
-    return render_template('worker.html', worker=worker)
+    return render_template('worker.html', worker=worker, reviews=reviews)
+ #---------------- REVIEW SUBMISSION ----------------
+@app.route('/review/<int:id>', methods=['POST'])
+def review(id):
+    rating = request.form['rating']
+    review = request.form['review']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT INTO reviews (worker_id, rating, review) VALUES (?, ?, ?)",
+        (id, rating, review)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(f'/worker/{id}')
 
 # ---------------- REGISTER ----------------
 @app.route('/register', methods=['GET', 'POST'])

@@ -20,6 +20,33 @@
         </a>
     </div>
 
+    <!-- Add Review -->
+    <h4 class="mt-4">⭐ Add Review</h4>
+
+    <form method="POST" action="/review/{{ worker[0] }}">
+        <select name="rating" class="form-control mb-2">
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="1">⭐</option>
+        </select>
+
+        <textarea name="review" class="form-control mb-2" placeholder="Write review"></textarea>
+
+        <button class="btn btn-primary">Submit</button>
+    </form>
+
+    <!-- Show Reviews -->
+    <h4 class="mt-4">📝 Reviews</h4>
+
+    {% for r in reviews %}
+        <div class="card p-2 mb-2">
+            ⭐ {{ r[2] }} <br>
+            {{ r[3] }}
+        </div>
+    {% endfor %}
+
     <a href="/" class="btn btn-secondary mt-3">⬅ Back</a>
 
 </body>
